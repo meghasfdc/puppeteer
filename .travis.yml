@@ -19,7 +19,10 @@ jobs:
         - CHROMIUM=true
         - FLAKINESS_DASHBOARD_NAME="Travis Chromium (node12 + linux)"
         - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
-      before_install: ./travis/setup-linux.sh
+      before_install:
+        - "sysctl kernel.unprivileged_userns_clone=1"
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
       script: ./travis/chromium.sh
     - node_js: "10.18.1"
       dist: trusty
@@ -27,7 +30,10 @@ jobs:
         - CHROMIUM=true
         - FLAKINESS_DASHBOARD_NAME="Travis Chromium (node10 + linux)"
         - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
-      before_install: ./travis/setup-linux.sh
+      before_install:
+        - "sysctl kernel.unprivileged_userns_clone=1"
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
       script: ./travis/chromium.sh
     - node_js: "10.18.1"
       os: windows
@@ -38,8 +44,14 @@ jobs:
         - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
     - node_js: "10.18.1"
       dist: trusty
-      before_install: ./travis/setup-linux.sh
-      script: 'if [ "$FIREFOX" = "true" ]; then BINARY=$FIREFOX_HOME/firefox/firefox npm run funit; fi'
+      before_install:
+        - "sysctl kernel.unprivileged_userns_clone=1"
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - "pyenv shell 3.6; pip3 install --user mozdownload"
+        - "rm -rf $FIREFOX_HOME; mozdownload -t daily -d $FIREFOX_HOME/latest.tar.bz --log-level DEBUG"
+        - "cd $FIREFOX_HOME; tar -xvf latest.tar.bz; cd -; ls $FIREFOX_HOME/firefox/firefox;"
+      script: 'BINARY=$FIREFOX_HOME/firefox/firefox npm run funit'
       env:
         - FIREFOX=true
         - FLAKINESS_DASHBOARD_NAME="Travis Firefox Nightly (node10 + linux)"
