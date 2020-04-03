@@ -1,6 +1,6 @@
 language: node_js
-os:
-  - linux
+os: linux
+dist: trusty
 addons:
   apt:
     packages:
@@ -30,16 +30,25 @@ script:
 jobs:
   include:
     - node_js: "12.16.1"
+      dist: trusty
       env:
         - CHROMIUM=true
         - FLAKINESS_DASHBOARD_NAME="Travis Chromium (node12 + linux)"
         - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
     - node_js: "10.18.1"
+      dist: trusty
       env:
         - CHROMIUM=true
         - FLAKINESS_DASHBOARD_NAME="Travis Chromium (node10 + linux)"
         - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
     - node_js: "10.18.1"
+      os: windows
+      env:
+        - CHROMIUM=true
+        - FLAKINESS_DASHBOARD_NAME="Travis Chromium (node10 + linux)"
+        - FLAKINESS_DASHBOARD_BUILD_URL="${TRAVIS_JOB_WEB_URL}"
+    - node_js: "10.18.1"
+      dist: trusty
       env:
         - FIREFOX=true
         - FLAKINESS_DASHBOARD_NAME="Travis Firefox Nightly (node10 + linux)"
